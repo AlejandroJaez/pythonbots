@@ -15,7 +15,13 @@ response = requests.get(full_url, headers=HEADERS).content
 
 soup = bs4.BeautifulSoup(response, 'html.parser')
 
-new_url = soup.find('a',attrs={'data-symbol' : re.compile("\.MX$")})
+try:
+    try:
+        new_url = soup.find('a',attrs={'data-symbol' : re.compile("^{arg}\.MX$")})
+    except:
+        new_url = soup.find('a',attrs={'data-symbol' : re.compile("\.MX$")})
+except:
+    new_url = soup.find('a',attrs={'data-symbol' : re.compile("^{arg}.*")})
 # <a href="/quote/CEMEXCPO.MX?p=CEMEXCPO.MX" title="CEMEX S.A.B. DE C.V." data-symbol="CEMEXCPO.MX" class="Fw(b)" data-reactid="66">CEMEXCPO.MX</a>
 url = new_url['href']
 
