@@ -1,6 +1,10 @@
 import discord
 import requests
 import bs4
+from dotenv import load_dotenv
+
+load_dotenv()
+TOKEN = os.getenv('DISCORD_TOKEN')
 
 client = discord.Client()
 
@@ -46,4 +50,4 @@ async def on_ready():
     print('------')
 
 
-client.run('ODA3MDM3MjE1MDE1NTY3NDMw.YByJ-g.tGdoeeJU6IOB6D6OEh4kivnsSqo')
+client.run(TOKEN)
