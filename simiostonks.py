@@ -1,5 +1,6 @@
 import discord
 import requests
+import os
 import bs4
 from dotenv import load_dotenv
 
