@@ -5,6 +5,7 @@ import re
 import bs4
 from dotenv import load_dotenv
 from discord.ext import commands
+from gbm import get_symbol
 
 load_dotenv()
 TOKEN = os.getenv('DISCORD_TOKEN')
@@ -72,6 +73,15 @@ async def bmv(ctx, arg):
         url = new_url['data-symbol']
         soup = get_price_mx(url)
         await extract_info(ctx, soup)
+
+@bot.command(name='gbm')
+async def bmv(ctx, arg):
+    data = get_symbol(arg)
+    sign = ""
+    if data['percentageChange'] > 0:
+        sign = "+"
+    response = f"```diff\n{data['issueName']} - {data['issueID']}\n Ultimo precio: ${data['lastPrice']}\nCambio: {sign}{data['percentageChange']}\nVolumen de compra: {data['askVolume']} a ${data['askPrice']}\nVolumen de venta: {data['bidVolume']} a ${data['bidPrice']}\n```"
+    await ctx.send(response)
 
 
 @bot.event
