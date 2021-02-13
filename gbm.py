@@ -64,7 +64,7 @@ def refresh_tokens(token_refresher):
     token_dict = json.loads(r.content)
     print("refresh token")
     token = token_dict['accessToken']
-    refresh_token = token_dict['refreshToken']
+    # refresh_token = token_dict['refreshToken'] this cause crash
     return token
 
 
