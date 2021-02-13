@@ -1,4 +1,5 @@
 import discord
+from discord.ext.commands.core import _CaseInsensitiveDict
 import requests
 import os
 import re
@@ -9,7 +10,8 @@ from gbm import get_symbol
 
 load_dotenv()
 TOKEN = os.getenv('DISCORD_TOKEN')
-bot = commands.Bot(command_prefix='!')
+bot = commands.Bot(command_prefix='!', case_insensitive=True)
+
 
 async def extract_info(ctx, soup):
     stock_price = soup.findAll(
@@ -74,13 +76,15 @@ async def bmv(ctx, arg):
         soup = get_price_mx(url)
         await extract_info(ctx, soup)
 
+
 @bot.command(name='gbm')
-async def bmv(ctx, arg):
+async def gbm(ctx, arg):
     data = get_symbol(arg)
     sign = ""
+    percent = round(data['percentageChange'],2)
     if data['percentageChange'] > 0:
         sign = "+"
-    response = f"```diff\n{data['issueName']} - {data['issueID']}\n Ultimo precio: ${data['lastPrice']}\nCambio: {sign}{data['percentageChange']}\nVolumen de compra: {data['askVolume']} a ${data['askPrice']}\nVolumen de venta: {data['bidVolume']} a ${data['bidPrice']}\n```"
+    response = f"```diff\n{data['issueName']} - {data['issueID']}\nUltimo precio: ${data['lastPrice']}\n{sign}{percent}%\nVCompra: {data['askVolume']} a ${data['askPrice']}\nVVenta: {data['bidVolume']} a ${data['bidPrice']}\n```"
     await ctx.send(response)
 
 

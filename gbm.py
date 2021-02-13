@@ -10,6 +10,7 @@ load_dotenv()
 USERNAME = os.getenv('USERNAME')
 PASSWORD = os.getenv('PASSWORD')
 token = ''
+refresh_token = ''
 token_dict = {}
 market_data = {}
 latest_market = datetime.datetime.now()
@@ -18,12 +19,13 @@ latest_market = datetime.datetime.now()
 def get_token(tokene):
     global token
     global token_dict
+    global refresh_token
     if token:
         if is_jwt_valid(token):
             print("token is valid.")
             return token
         else:
-            refresh_token(token_dict['refreshToken'])
+            refresh_tokens(refresh_token)
     else:
         url = 'https://auth.gbm.com/api/v1/session/user'
 
@@ -40,13 +42,17 @@ def get_token(tokene):
         token_dict = json.loads(r.content)
         print("new token")
         token = token_dict['accessToken']
+        refresh_token = token_dict['refreshToken']
         return token
 
 
-def refresh_token(token_refresher):
+def refresh_tokens(token_refresher):
+    print(token_refresher)
+    global token
+    global token_dict
+    global refresh_token
     url = 'https://auth.gbm.com/api/v1/session/user/refresh'
 
-    payload = '{\"clientId\":\"7c464570619a417080b300076e163289\",\"user\":\""+ {USERNAME}+ "\",\"password\":\""+ {PASSWORD}+ "\"}'
     payload = {"refreshToken": token_refresher,
                "clientId": "7c464570619a417080b300076e163289"}
     headers = {
@@ -56,8 +62,9 @@ def refresh_token(token_refresher):
     # response = requests.request("POST", url, headers=headers, data=json.dumps(payload, indent=2))
     r = requests.post(url, headers=headers, data=json.dumps(payload, indent=2))
     token_dict = json.loads(r.content)
-    print("new token")
+    print("refresh token")
     token = token_dict['accessToken']
+    refresh_token = token_dict['refreshToken']
     return token
 
 
